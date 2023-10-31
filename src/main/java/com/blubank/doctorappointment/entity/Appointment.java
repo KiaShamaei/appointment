@@ -25,9 +25,9 @@ public class Appointment {
     @JoinColumn(name = "patient_id" , nullable = false)
     private Patient patient;
     @Column(name = "start_time")
-    private LocalDate startTime ;
+    private LocalDateTime startTime ;
     @Column(name = "end_time")
-    private LocalDate endTime ;
+    private LocalDateTime endTime ;
 
 
 }
