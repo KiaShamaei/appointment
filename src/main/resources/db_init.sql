@@ -23,7 +23,7 @@ CREATE TABLE appointment
 (
     id         BIGINT   NOT NULL,
     doctor_id  BIGINT   NOT NULL,
-    patient_id BIGINT   NOT NULL,
+    patient_id BIGINT   NULL,
     start_time datetime NULL,
     end_time   datetime NULL,
     CONSTRAINT pk_appointment PRIMARY KEY (id)

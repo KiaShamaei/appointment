@@ -1,6 +1,7 @@
 package com.blubank.doctorappointment.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -21,5 +22,6 @@ public class Patient {
     private String address ;
     private String phone ;
     @OneToMany(fetch=FetchType.LAZY , cascade = CascadeType.ALL , mappedBy = "patient")
+    @JsonIgnore
     private Set<Appointment> appointments;
 }

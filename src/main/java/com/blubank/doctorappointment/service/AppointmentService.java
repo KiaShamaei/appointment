@@ -25,11 +25,16 @@ public class AppointmentService {
 
 
     public List<Appointment> addOpenTime(OpenTimeAppointmentModel model) {
+
         var startTime = model.getStartTime();
-        var endTime = model.getStartTime() ;
+        var endTime = model.getEndTime() ;
+        var getStartDate = startTime.toLocalDate();
+        var getEndDate = endTime.toLocalDate();
+        if(!getEndDate.equals(getStartDate)){
+            throw  new RuntimeException("you can set appoint for more than one day");
+        }
         var doctor = doctorRepository.findById(model.getDoctorId()).orElseThrow(()->new RuntimeException("doctor not find"));
         List<Appointment> appointmentList = new ArrayList<>();
-
         while (startTime.isBefore(endTime)) {
             LocalDateTime endTimeForSlot = startTime.plusMinutes(30);
             if (endTimeForSlot.isBefore(endTime)) {
