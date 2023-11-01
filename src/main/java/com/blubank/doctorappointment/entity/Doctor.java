@@ -1,9 +1,6 @@
 package com.blubank.doctorappointment.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -13,6 +10,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Doctor {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
