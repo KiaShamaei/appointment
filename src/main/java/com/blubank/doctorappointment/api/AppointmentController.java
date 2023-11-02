@@ -4,13 +4,11 @@ package com.blubank.doctorappointment.api;
 import com.blubank.doctorappointment.entity.Appointment;
 import com.blubank.doctorappointment.model.BookAppointmentModel;
 import com.blubank.doctorappointment.model.OpenTimeAppointmentModel;
+import com.blubank.doctorappointment.model.PatientModel;
 import com.blubank.doctorappointment.service.AppointmentService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,11 +24,28 @@ public class AppointmentController {
     }
 
     @PostMapping("/open-time")
-    public ResponseEntity<List<Appointment>> bookAppointment(@RequestBody OpenTimeAppointmentModel model){
-        var result = appointmentService.addOpenTime(model);
-        return ResponseEntity.ok(result);
-
+    public ResponseEntity<String> bookAppointment(
+            @RequestBody OpenTimeAppointmentModel model){
+        appointmentService.addOpenTime(model);
+        return ResponseEntity.ok("appointment_add_successfully");
     }
+    @GetMapping("/booked/{doctorId}")
+    public ResponseEntity<List<BookAppointmentModel>> getBookAppointmentOfDoctor(@PathVariable Long doctorId){
+        return ResponseEntity.ok(appointmentService.getAppointmentBookedOfDoctor(doctorId));
+    }
+
+    @GetMapping("/doctor/{doctorId}")
+    public ResponseEntity<List<BookAppointmentModel>> getAppointmentOfDoctor(@PathVariable Long doctorId){
+        return ResponseEntity.ok(appointmentService.getAppointmentDoctor(doctorId));
+    }
+
+    @PostMapping("/take/{appointmentId}")
+    public ResponseEntity<BookAppointmentModel> takeAppointment(@PathVariable Long appointmentId ,
+                                                       @RequestBody PatientModel patientModel){
+
+        return ResponseEntity.ok(appointmentService.takeAppointment(patientModel , appointmentId));
+    }
+
 
 
 }
