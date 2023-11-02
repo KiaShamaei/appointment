@@ -21,7 +21,4 @@ public class Doctor {
     private String address ;
     private String phone ;
     private String field ;
-    @OneToMany(fetch=FetchType.LAZY , cascade = CascadeType.ALL , mappedBy = "doctor")
-    @JsonIgnore
-    private Set<Appointment> appointments ;
 }

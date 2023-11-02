@@ -13,7 +13,7 @@ CREATE TABLE doctor
     id      BIGINT       NOT NULL,
     name    VARCHAR(255) NULL,
     family  VARCHAR(255) NULL,
-    address VARCHAR(500) NULL,
+    address VARCHAR(255) NULL,
     phone   VARCHAR(255) NULL,
     field   VARCHAR(255) NULL,
     CONSTRAINT pk_doctor PRIMARY KEY (id)
@@ -26,6 +26,7 @@ CREATE TABLE appointment
     patient_id BIGINT   NULL,
     start_time datetime NULL,
     end_time   datetime NULL,
+    version    BIGINT   NULL,
     CONSTRAINT pk_appointment PRIMARY KEY (id)
 );
 

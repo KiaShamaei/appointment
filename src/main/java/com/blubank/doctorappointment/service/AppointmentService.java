@@ -7,9 +7,11 @@ import com.blubank.doctorappointment.repository.AppointmentRepository;
 import com.blubank.doctorappointment.repository.DoctorRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -37,16 +39,17 @@ public class AppointmentService {
         List<Appointment> appointmentList = new ArrayList<>();
         while (startTime.isBefore(endTime)) {
             LocalDateTime endTimeForSlot = startTime.plusMinutes(30);
-            if (endTimeForSlot.isBefore(endTime)) {
+            if (( endTime.equals(endTimeForSlot) || endTime.isAfter(endTimeForSlot)) &&
+                    Duration.between(startTime, endTimeForSlot).toMinutes() >= 30) {
                 Appointment appointment = new Appointment();
                 appointment.setDoctor(doctor);
                 appointment.setStartTime(startTime);
                 appointment.setEndTime(endTimeForSlot);
-                appointmentRepository.save(appointment);
                 appointmentList.add(appointment);
             }
             startTime = endTimeForSlot;
         }
+        appointmentRepository.saveAll(appointmentList);
         return appointmentList ;
     }
 

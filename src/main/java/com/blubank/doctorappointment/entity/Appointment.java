@@ -37,5 +37,8 @@ public class Appointment {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime ;
 
+    @Version
+    private Long version;
+
 
 }
