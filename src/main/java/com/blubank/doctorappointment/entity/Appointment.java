@@ -38,6 +38,9 @@ public class Appointment implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime endTime ;
 
+    @Enumerated(EnumType.STRING)
+    private AppointmentStatus status;
+
     @Version
     private Long version;
 

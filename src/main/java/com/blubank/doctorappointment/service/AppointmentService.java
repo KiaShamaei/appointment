@@ -1,6 +1,7 @@
 package com.blubank.doctorappointment.service;
 
 import com.blubank.doctorappointment.entity.Appointment;
+import com.blubank.doctorappointment.entity.AppointmentStatus;
 import com.blubank.doctorappointment.entity.Patient;
 import com.blubank.doctorappointment.model.BookAppointmentModel;
 import com.blubank.doctorappointment.model.OpenTimeAppointmentModel;
@@ -8,12 +9,17 @@ import com.blubank.doctorappointment.model.PatientModel;
 import com.blubank.doctorappointment.repository.AppointmentRepository;
 import com.blubank.doctorappointment.repository.DoctorRepository;
 import com.blubank.doctorappointment.repository.PatientRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -30,6 +36,30 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+    }
+
+    public Optional<Appointment> getAppointmentById(Long appointmentId){
+       return appointmentRepository.findById(appointmentId);
+    }
+
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public ResponseEntity deleteAppointment (Long appointmentId){
+        Optional<Appointment>appointmentOptional = this.getAppointmentById(appointmentId);
+
+        if(appointmentOptional.isPresent()
+                && appointmentOptional.get().getStatus().equals(AppointmentStatus.OPEN)){
+            Appointment appointment = appointmentOptional.get();
+            if(appointment.getStatus().equals(AppointmentStatus.BOOKED)){
+                return new ResponseEntity<>("Appointment Booked" , HttpStatus.NOT_ACCEPTABLE);
+            }
+            appointment.setStatus(AppointmentStatus.CANCEL_BY_DOCTOR);
+            appointmentRepository.save(appointment);
+            return ResponseEntity.ok("Appointment Cancel by Doctor successfully!");
+        }else{
+            return new ResponseEntity<>("Appointment Not found" , HttpStatus.NOT_FOUND);
+        }
+
+
     }
 
 
@@ -52,6 +82,7 @@ public class AppointmentService {
                 appointment.setDoctor(doctor);
                 appointment.setStartTime(startTime);
                 appointment.setEndTime(endTimeForSlot);
+                appointment.setStatus(AppointmentStatus.OPEN);
                 appointmentList.add(appointment);
             }
             startTime = endTimeForSlot;
@@ -59,7 +90,7 @@ public class AppointmentService {
         appointmentRepository.saveAll(appointmentList);
         return appointmentList ;
     }
-    public List<BookAppointmentModel>  getAppointmentBookedOfDoctor(Long doctorId){
+    public List<BookAppointmentModel> getBookedAppointmentOfDoctor(Long doctorId){
        List<Appointment> list= appointmentRepository.findAllBookedAppointmentByDoctorId(doctorId);
        List<BookAppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
                .appointmentId(t.getId())
@@ -98,6 +129,7 @@ public class AppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(()->new RuntimeException("appointment not find"));
         appointment.setPatient(patient);
+        appointment.setStatus(AppointmentStatus.BOOKED);
         appointmentRepository.save(appointment);
         return BookAppointmentModel.builder()
                 .appointmentId(appointmentId)
@@ -109,5 +141,6 @@ public class AppointmentService {
                 .doctorId(appointment.getDoctor().getId()).build();
 
     }
+
 
 }

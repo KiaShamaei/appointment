@@ -7,10 +7,12 @@ import com.blubank.doctorappointment.model.OpenTimeAppointmentModel;
 import com.blubank.doctorappointment.model.PatientModel;
 import com.blubank.doctorappointment.service.AppointmentService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/appointment")
@@ -31,7 +33,7 @@ public class AppointmentController {
     }
     @GetMapping("/booked/{doctorId}")
     public ResponseEntity<List<BookAppointmentModel>> getBookAppointmentOfDoctor(@PathVariable Long doctorId){
-        return ResponseEntity.ok(appointmentService.getAppointmentBookedOfDoctor(doctorId));
+        return ResponseEntity.ok(appointmentService.getBookedAppointmentOfDoctor(doctorId));
     }
 
     @GetMapping("/doctor/{doctorId}")
@@ -44,6 +46,10 @@ public class AppointmentController {
                                                        @RequestBody PatientModel patientModel){
 
         return ResponseEntity.ok(appointmentService.takeAppointment(patientModel , appointmentId));
+    }
+    @DeleteMapping("/delete/{appointmentId}")
+    public ResponseEntity<?> deleteAppointment(@PathVariable Long appointmentId){
+        return appointmentService.deleteAppointment(appointmentId);
     }
 
 

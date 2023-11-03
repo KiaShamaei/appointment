@@ -21,12 +21,13 @@ CREATE TABLE doctor
 
 CREATE TABLE appointment
 (
-    id         BIGINT   NOT NULL,
-    doctor_id  BIGINT   NOT NULL,
-    patient_id BIGINT   NULL,
-    start_time datetime NULL,
-    end_time   datetime NULL,
-    version    BIGINT   NULL,
+    id         BIGINT       NOT NULL,
+    doctor_id  BIGINT       NOT NULL,
+    patient_id BIGINT       NULL,
+    start_time datetime     NULL,
+    end_time   datetime     NULL,
+    status     VARCHAR(255) NULL,
+    version    BIGINT       NULL,
     CONSTRAINT pk_appointment PRIMARY KEY (id)
 );
 
