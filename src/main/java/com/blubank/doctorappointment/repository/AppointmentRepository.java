@@ -20,5 +20,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
             " and ( a.status = com.blubank.doctorappointment.entity.AppointmentStatus.OPEN " +
             " or a.status = com.blubank.doctorappointment.entity.AppointmentStatus.CANCEL_BY_PATIENT  ) " )
     List<Appointment> findAllAppointmentByDoctorIdAndDate(Long doctorId,LocalDateTime localTime);
+
+    @Query(" select a from  Appointment a " +
+            " where a.patient.phone = :mobile " +
+            " and a.status = com.blubank.doctorappointment.entity.AppointmentStatus.BOOKED ")
+    List<Appointment> findAllAppointmentByPatient(String mobile);
+
 }
 
