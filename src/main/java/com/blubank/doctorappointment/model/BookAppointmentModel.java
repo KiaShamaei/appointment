@@ -1,18 +1,18 @@
 package com.blubank.doctorappointment.model;
 
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
-@Data
-@Builder
-public class BookAppointmentModel {
-    private Long appointmentId;
-    private Long doctorId;
-    private LocalDateTime startTime ;
-    private LocalDateTime endTime ;
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+public class BookAppointmentModel extends AppointmentModel {
     private String patientName ;
     private String patientFamily ;
     private String patientMobile ;

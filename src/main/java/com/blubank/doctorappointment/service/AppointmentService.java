@@ -3,8 +3,8 @@ package com.blubank.doctorappointment.service;
 import com.blubank.doctorappointment.entity.Appointment;
 import com.blubank.doctorappointment.entity.AppointmentStatus;
 import com.blubank.doctorappointment.entity.Patient;
+import com.blubank.doctorappointment.model.AppointmentModel;
 import com.blubank.doctorappointment.model.BookAppointmentModel;
-import com.blubank.doctorappointment.model.OpenTimeAppointmentModel;
 import com.blubank.doctorappointment.model.PatientModel;
 import com.blubank.doctorappointment.repository.AppointmentRepository;
 import com.blubank.doctorappointment.repository.DoctorRepository;
@@ -63,7 +63,7 @@ public class AppointmentService {
     }
 
 
-    public List<Appointment> addOpenTime(OpenTimeAppointmentModel model) {
+    public List<Appointment> addOpenTime(AppointmentModel model) {
 
         var startTime = model.getStartTime();
         var endTime = model.getEndTime() ;
@@ -105,12 +105,23 @@ public class AppointmentService {
        return result;
     }
     public List<BookAppointmentModel>  getAppointmentDoctor(Long doctorId){
-        List<Appointment> list= appointmentRepository.findAllAppointmentByDoctorId(doctorId);
+        List<Appointment> list= appointmentRepository.findAllAppointmentByDoctorIdAndDate(doctorId , null);
         List<BookAppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
                 .appointmentId(t.getId())
                 .startTime(t.getStartTime())
                 .endTime(t.getEndTime())
                 .doctorId(t.getDoctor().getId())
+                .build()).collect(Collectors.toList());
+
+        return result;
+    }
+    public List<AppointmentModel>  getAppointmentByDoctorAndDate(AppointmentModel model){
+        List<Appointment> list= appointmentRepository.findAllAppointmentByDoctorIdAndDate(model.getDoctorId() , model.getStartTime());
+        List<AppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
+                .startTime(t.getStartTime())
+                .endTime(t.getEndTime())
+                .doctorId(t.getDoctor().getId())
+                .appointmentId(t.getId())
                 .build()).collect(Collectors.toList());
 
         return result;
@@ -141,6 +152,8 @@ public class AppointmentService {
                 .doctorId(appointment.getDoctor().getId()).build();
 
     }
+
+
 
 
 }
