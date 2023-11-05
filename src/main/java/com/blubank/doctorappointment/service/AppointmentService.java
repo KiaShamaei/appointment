@@ -42,7 +42,12 @@ public class AppointmentService {
        return appointmentRepository.findById(appointmentId);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    /**
+     * delete appointment base appointmentId
+     * @param appointmentId
+     * @return
+     */
+    @Transactional
     public ResponseEntity deleteAppointment (Long appointmentId){
         Optional<Appointment>appointmentOptional = this.getAppointmentById(appointmentId);
 
@@ -62,7 +67,12 @@ public class AppointmentService {
 
     }
 
-
+    /**
+     * set appointment for a doctor every 30 min
+     * @param  model
+     * @type AppointmentModel
+     * @return
+     */
     public List<Appointment> addOpenTime(AppointmentModel model) {
 
         var startTime = model.getStartTime();
@@ -90,6 +100,11 @@ public class AppointmentService {
         appointmentRepository.saveAll(appointmentList);
         return appointmentList ;
     }
+    /**
+     * get list of all booked appointments base doctorId
+     * @param doctorId
+     * @return
+     */
     public List<BookAppointmentModel> getBookedAppointmentOfDoctor(Long doctorId){
        List<Appointment> list= appointmentRepository.findAllBookedAppointmentByDoctorId(doctorId);
        List<BookAppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
@@ -104,6 +119,12 @@ public class AppointmentService {
 
        return result;
     }
+
+    /**
+     * get list of all doctor appointments base doctorId
+     * @param doctorId
+     * @return List<BookAppointmentModel>
+     */
     public List<BookAppointmentModel>  getAppointmentDoctor(Long doctorId){
         List<Appointment> list= appointmentRepository.findAllAppointmentByDoctorIdAndDate(doctorId , null);
         List<BookAppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
@@ -115,6 +136,11 @@ public class AppointmentService {
 
         return result;
     }
+    /**
+     * get appointment free for doctor in special date
+     * @param model
+     * @return
+     */
     public List<AppointmentModel>  getAppointmentByDoctorAndDate(AppointmentModel model){
         List<Appointment> list= appointmentRepository.findAllAppointmentByDoctorIdAndDate(model.getDoctorId() , model.getStartTime());
         List<AppointmentModel> result = list.stream().map(t->BookAppointmentModel.builder()
@@ -126,7 +152,15 @@ public class AppointmentService {
 
         return result;
     }
-    //todo add validation for patient model
+
+    /**
+     * book appointment to a patient
+     * @param appointmentId
+     * @param model
+     * @type PatientModel
+     * @return BookAppointmentModel
+     */
+    @Transactional
     public BookAppointmentModel takeAppointment(PatientModel model , Long appointmentId){
         Patient patient = patientRepository.findByPhone(model.getPhone()).orElseGet(
                 ()-> {
